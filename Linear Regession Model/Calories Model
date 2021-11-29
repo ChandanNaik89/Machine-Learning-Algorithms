@@ -1,0 +1,138 @@
+#Linear Regression :
+
+#Read a csv file ##
+cal_cons<-read.csv("C:\\Users\\admin\\Desktop\\python program files\\Assignment 3\\calories_consumed.csv")
+#cal_cons <-read.csv(file.choose())    #choose calories_consumed
+View(cal_cons)
+
+#Need to import package lattice
+install.packages("lattice")
+library(lattice)
+
+#calculate Mean and Median
+mean(cal_cons$Weight.gained..grams.)  #357.7143
+mean(cal_cons$Calories.Consumed)  #2340.714
+median(cal_cons$Weight.gained..grams.)  #200
+median(cal_cons$Calories.Consumed)  #2250
+#mean is not equal to median
+
+#Graphical Representation :
+# To chech for Normal Distribution :
+
+#QQ Plot
+qqnorm(cal_cons$Weight.gained..grams.)
+qqline(cal_cons$Weight.gained..grams.)
+#Not follows Normal Distribution
+
+qqnorm(cal_cons$Calories.Consumed)
+qqline(cal_cons$Calories.Consumed)
+#Not follows Normal Distribution
+
+#Histogram
+hist(cal_cons$Weight.gained..grams.)
+hist(cal_cons$Calories.Consumed)
+
+#Check for outliers:
+A<-boxplot(cal_cons$Weight.gained..grams.)
+B<-boxplot(cal_cons$Calories.Consumed)
+
+A$out    #No
+B$out    #No
+
+# Transformation of data :
+
+x<-log(cal_cons$Weight.gained..grams.)
+#x<-sqrt(cal_cons$Weight.gained..grams.)
+qqnorm(x)
+qqline(x)
+mean(x)   #5.4921   
+median(x) #5.2983
+hist(x)
+
+y<-log(cal_cons$Calories.Consumed)
+qqnorm(y)
+qqline(y)
+hist(y)
+mean(y) #7.711
+median(y) #7.718
+
+# Save the converted x and y data in a Data frame
+cal_con1<-data.frame(weight=x,calories=y)   
+View(cal_con1)
+summary(cal_con1)
+# Mean and median are almost equal
+
+#Standardisation :
+standard_cal_col <- as.data.frame(scale(cal_con1))
+View(standard_cal_col)
+summary(standard_cal_col)
+
+#Normalization :
+#normalize<-function(x)
+#{
+ # return((x-min(x))/(max(x)-min(x)))
+#}
+#standard_cal_col1<-as.data.frame(normalize(cal_con1))
+#View(standard_cal_col1)
+#summary(standard_cal_col1)
+
+qqnorm(standard_cal_col$weight)
+qqline(standard_cal_col$weight)
+
+qqnorm(standard_cal_col$calories)
+qqline(standard_cal_col$calories)
+
+attach(standard_cal_col)
+
+# Model Building
+
+#Scatter Plot
+plot(calories,weight)
+cor(calories,weight)    #0.92  --- Strong
+
+#Model1:
+
+mod1<-lm(weight~calories,data=standard_cal_col)
+summary(mod1)
+
+#P value is less than 0.05, Intercept = -625.75236, Slope =0.42016
+#Adjusted R Squared value = 0.8882 thatis greater than 8
+
+
+mod1$coefficients
+mod1$residuals
+
+sqrt(sum(mod1$residuals^2)/nrow(standard_cal_col)) ## RMSE    0.3775442
+
+# Prediction 
+pred_conf <- as.data.frame(predict(mod1,interval="confidence"))
+View(pred_conf)
+
+#Prediction
+Pred_val<-as.data.frame(predict(mod1,interval="predict"))
+
+View(Pred_val)
+
+# Model 2 for checking better R Squared Value :
+
+mod2<-lm(weight~sqrt(calories),data=standard_cal_col)
+summary(mod2)
+
+#P value is less than 0.05, Intercept = -0.8566, Slope =1.9572
+#Adjusted R Squared value = 0.9412 thatis greater than 8
+
+mod2$coefficients
+mod2$residuals
+
+sqrt(sum(mod2$residuals^2)/nrow(standard_cal_col)) ## RMSE   0.09939147
+
+#Prediction
+pred_conf1 <- as.data.frame(predict(mod2,interval="confidence"))
+View(pred_conf)
+
+#Prediction
+Pred_val1<-as.data.frame(predict(mod2,interval="predict"))
+View(Pred_val1)
+
+#Result : Model2 is having more R squared Value and less RMSE value. 
+# Model2 is best fit for Prediction 
