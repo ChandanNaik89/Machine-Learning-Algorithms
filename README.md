@@ -19,6 +19,6 @@ Machine learning is much similar to data mining as it also deals with the huge a
 ## Classification of Machine Learning ##
 At a broad level, machine learning can be classified into three types:
 
-#Supervised learning
-#Unsupervised learning
-#Reinforcement learning
+Supervised learning #
+Unsupervised learning
+Reinforcement learning
