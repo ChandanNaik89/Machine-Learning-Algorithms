@@ -15,3 +15,10 @@ Machine learning uses data to detect various patterns in a given dataset.
 It can learn from past data and improve automatically.
 It is a data-driven technology.
 Machine learning is much similar to data mining as it also deals with the huge amount of the data.
+
+## Classification of Machine Learning ##
+At a broad level, machine learning can be classified into three types:
+
+Supervised learning
+Unsupervised learning
+Reinforcement learning
