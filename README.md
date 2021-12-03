@@ -21,4 +21,4 @@ At a broad level, machine learning can be classified into three types:
 
 Supervised learning 
 Unsupervised learning
-#Reinforcement learning
+Reinforcement learning
