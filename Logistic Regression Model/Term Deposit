@@ -1,0 +1,101 @@
+#Predict whether the client has subscribed a term deposit or not 
+
+#Read csv data :
+bank<-read.csv(file.choose(),sep=";")
+View(bank)
+ncol(bank)   #17
+colnames(bank)
+# "age"       "job"       "marital"   "education" "default"   "balance"   "housing"  
+#"loan"      "contact"   "day"       "month"     "duration"  "campaign"  "pdays"    
+# "previous"  "poutcome"  "y"     
+
+str(bank)
+table(bank$y)
+#no   yes 
+#39922  5289
+
+
+#Need to deal with categorical data  :
+#Convert categorical data into Binary
+
+#Use revalue function to convert data into binary digits.
+
+library(plyr)   #required for revalue function
+
+library(fastDummies)
+bank_new<-dummy_cols(bank[,1:16])
+ncol(bank_new)   #60
+View(bank_new)
+
+bank_new["Output"]<-bank$y
+ncol(bank_new)    #61
+
+unique(bank_new$Output)   #no, yes
+bank_new$Output<-as.integer(revalue(bank_new$Output,c("no"="0","yes"="1")))
+
+#Delete columns 2,3,4,5,7,8,9,11,16 - categorical columns
+
+bank_new<-bank_new[,-c(2,3,4,5,7,8,9,11,16)]
+View(bank_new)
+colnames(bank_new)
+
+#Preprocessing of data :
+
+#Check for Null Values:
+
+unique(is.na(bank_new))
+
+#there are no NULL values.
+
+summary(bank_new) 
+
+#Model Building :
+  
+attach(bank_new)
+
+model_bank<-glm(Output~.,data = bank_new,family = "binomial")  
+summary(model_bank)
+
+#Calculate the probability
+prob_bank<-predict(model_bank,type=c("response"),bank_new)
+
+#Confusion Matrix :
+confusion_bank<-table(prob_bank>0.5,bank_new$Output)
+
+#         0     1
+#FALSE 38940  3456
+#TRUE    982  1833
+
+#Accuracy
+acc_bank<-sum(diag(confusion_bank))/sum(confusion_bank)
+acc_bank       #0.9018 ...... Strong
+
+#Predict the Output based on Probability:
+pred_bank<-NULL
+
+for (i in 1:45211){
+  pred_bank[i]=ifelse(prob_bank>=0.5,1,0)
+} 
+
+#Add prob_bank and Pred_bank column in bank data set :
+bank_new["probability"]<-prob_bank
+bank_new["Predicted Value"]<-pred_bank
+
+View(bank_new)
+View(bank_new[,52:54])
+
+conf_pred<-table(bank_new$Output,bank_new$`Predicted Value`)
+accuracy_model<-sum(diag(conf_pred))/sum(conf_pred)
+accuracy_model    #0.88......... strong
+
+#ROC Curve:
+
+library(ROCR)
+
+pred_rocr<-prediction(prob_bank,bank_new$Output)
+perf_rocr<-performance(pred_rocr,"tpr","fpr")
+plot(perf_rocr)
+
+#This curve covers max part of area
+
+#More area under the RIC Curve, better the model.
