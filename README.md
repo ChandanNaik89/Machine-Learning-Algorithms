@@ -23,6 +23,3 @@ Supervised learning
 Unsupervised learning
 Reinforcement learning
 
-![1_NiblImElt1bSz1zzE7DaFg](https://user-images.githubusercontent.com/92516955/144555747-a10fa734-16da-475c-a95e-8e44ee872c43.png)
-
-
