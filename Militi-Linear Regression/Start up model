@@ -1,0 +1,201 @@
+#Multiple Linear Regression :
+
+#Question 1
+#Prepare a prediction model for profit of 50_startups data.
+
+#Read a CSV File :
+
+#startup<-read.csv(file.choose())
+startup<-read.csv("C:\\Users\\admin\\Desktop\\python program files\\Assignment 5\\50_Startups.csv")
+View(startup)
+summary(startup)
+class(startup)
+
+
+#Need to deal with categorical data column (State) :
+#Use revalue function to convert the char values into number.
+
+unique(startup$State)
+#"New York"   "California" "Florida"
+install.packages("plyr")
+library(plyr)
+
+startup$State<-as.integer(revalue(startup$State,c("New York"="0","California"="1","Florida"="2")))
+View(startup)
+
+#Check for Null Values :
+is.na(startup)
+
+# There are no Null values.
+
+#Normaliy Check:
+
+#Graphical Representation
+#QQ Plot
+
+qqnorm(startup$R.D.Spend)
+qqline(startup$R.D.Spend)
+
+qqnorm(startup$Administration)
+qqline(startup$Administration)
+
+qqnorm(startup$Marketing.Spend)
+qqline(startup$Marketing.Spend)
+
+qqnorm(startup$Profit)
+qqline(startup$Profit)
+
+#Histogram
+hist(startup$R.D.Spend)
+hist(startup$Administration)
+hist(startup$Marketing.Spend)
+hist(startup$Profit)
+
+#Boxplot Representation
+A<-boxplot(startup$R.D.Spend)
+B<-boxplot(startup$Administration)
+C<-boxplot(startup$Marketing.Spend)
+D<-boxplot(startup$Profit)
+
+#Outliers :
+A$out     #No
+B$out     #No
+C$out     #No
+D$out     #No
+
+#Calculate Mean and Median :
+summary(startup)
+
+#R D Spend          Administration      Marketing.Spend       Profit
+#Mean =73721.62     mean=121344.6       mean=211025.1         mean=112012.6
+#Median=73051.08    median=122699.8     median=212716.2       median=107978.2
+
+#No need of Transformation
+
+attach(startup)
+
+#Plot relation between each X and Y:
+
+plot(R.D.Spend,Profit)         #Linear relation - strong
+plot(Administration,Profit)    #Not following Linear Relation 
+plot(Marketing.Spend,Profit)   #Linear relation - moderate
+plot(State,Profit)             #Not following Linear Relation
+
+pairs(startup)
+
+#Correlation Between Input and Output Variables:
+cor(R.D.Spend,Profit)           #0.9729005      Strong
+cor(Administration,Profit)      #0.2007166
+cor(Marketing.Spend,Profit)     #0.7477657      Moderate
+cor(State,Profit)               #0.04847097
+
+cor(startup)
+
+# R D Spend ,Profit are having strong correlation and Marketing , Profit are having Moderate Correlation.
+
+
+#Model1 :
+
+startup_model1<-lm(Profit~R.D.Spend+Administration+Marketing.Spend+State,data=startup)
+summary(startup_model1)
+
+#P<0.05, Multiple R-squared:  0.9508,	Adjusted R-squared:  0.9464 
+
+#Prediction:
+predict_model1<-predict(startup_model1,interval = "predict")
+View(predict_model1)
+
+
+#VIF:
+vif(startup_model1)
+
+
+startup_model1$coefficients
+startup_model1$residuals
+
+plot(startup_model1)
+
+#Model with  R D Spend as I/P and Profit as O/P
+startup_modelRD<-lm(Profit~R.D.Spend,data=startup)
+summary(startup_modelRD)
+#p<0.05 and Multiple R-squared:  0.9465,	Adjusted R-squared:  0.9454 
+ 
+#Model with  Administration as I/P and Profit as O/P
+startup_modelAdm<-lm(Profit~Administration,data=startup)
+summary(startup_modelAdm)
+#P<0.05 andMultiple R-squared:  0.04029,	Adjusted R-squared:  0.02029  
+
+plot(startup_modelAdm)
+
+#Model with R D Spend , Administration together as I/P and Profit as O/P
+startup_RD_Adm<-lm(Profit~Administration+R.D.Spend,data=startup)
+summary(startup_RD_Adm)
+#P<0.05 and Multiple R-squared:  0.9478,	Adjusted R-squared:  0.9456
+
+
+#Identification of Outliers and influential variable :
+
+library(car)
+
+qqPlot(startup_model1)  # Outliers 46th and 50th row
+influence.measures(startup_model1)
+influencePlot(startup_model1)    #49th and 50th row
+
+#Diagnostic Plot
+influenceIndexPlot(startup_model1)
+
+#Model with deleting 49th and 50th record :
+#Model 2:
+
+startup_model1_del<-lm(Profit~R.D.Spend+Administration+Marketing.Spend+State,data=startup[-c(49,50),])
+summary(startup_model1_del)
+
+
+#p<0.05 and Multiple R-squared:  0.9627,	Adjusted R-squared:  0.9592
+
+#Check collinearity Problem
+
+vif(startup_model1_del)
+#VIF<10  .. No Collinearity Problem
+
+#Added Variable Plots
+avPlots(startup_model1_del,col="red")
+
+
+#Prediction:
+predict_model2<-predict(startup_model1_del,interval = "predict")
+View(predict_model2)
+
+
+#Model 3:
+
+startup_model2_del<-lm(Profit~R.D.Spend+log(Administration)+Marketing.Spend+State,data=startup[-c(49,50),])
+summary(startup_model2_del)
+
+#Multiple R-squared:  0.9625,	Adjusted R-squared:  0.959 
+#p<0.05
+
+avPlots(startup_model2_del,col="blue")
+
+vif(startup_model2_del)   #VIF<10
+
+#Prediction:
+predict_model3<-predict(startup_model2_del,interval = "predict")
+View(predict_model3)
+
+
+#QQPlot of various Models:  
+
+qqPlot(startup_model1)
+qqPlot(startup_model1_del)
+qqPlot(startup_model2_del)
+
+
+# Check AIC:
+install.packages("MASS")
+library(MASS)
+
+stepAIC(startup_model1_del)
+ 
+
+#Lower the AIC, Better is the model.
