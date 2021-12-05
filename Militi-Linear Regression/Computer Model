@@ -1,0 +1,300 @@
+#Read a CSV File :
+
+#computerdata<-read.csv(file.choose())
+computerdata<-read.csv("C:\\Users\\admin\\Desktop\\python program files\\Assignment 5\\Computer_Data.csv")
+View(computerdata)
+
+#First column(Index) is not required. Delete First Column -
+computerdata<-computerdata[,-1]
+View(computerdata)
+
+class(computerdata)
+
+#Need to deal with categorical Data:
+
+#Use revalue function to convert the categorical data in Binary digit
+library(plyr)
+
+unique(computerdata$cd)     #no , yes
+unique(computerdata$multi)  #no , yes
+unique(computerdata$premium) #no, yes
+
+#Column cd :
+computerdata$cd<-as.integer(revalue(computerdata$cd,c("no"="0","yes"="1")))
+#Column multi :
+computerdata$multi<-as.integer(revalue(computerdata$multi,c("no"="0","yes"="1")))
+#Column premium :
+computerdata$premium<-as.integer(revalue(computerdata$premium,c("no"="0","yes"="1")))
+
+View(computerdata)
+
+#Preprocessing of Data:
+
+#Check for Null Values :
+
+unique(is.na(computerdata))
+
+#No Null Values.
+
+#Outliers :
+
+A<-boxplot(computerdata$price)  #yes
+B<-boxplot(computerdata$speed)  #No
+C<-boxplot(computerdata$hd)     #yes
+D<-boxplot(computerdata$ram)    #yes
+E<-boxplot(computerdata$screen) #Only 1
+
+#Outlier Treatment :
+#Function to remove outliers :
+
+outlierTreament<-function(x){
+  qnt <- quantile(x, probs=c(.25, .75), na.rm = T)
+  caps <- quantile(x, probs=c(.05, .95), na.rm = T)
+  H <- 1.5 * IQR(x, na.rm = T)
+  x[x < (qnt[1] - H)] <- caps[1]
+  x[x > (qnt[2] + H)] <- caps[2]
+  return(x)}
+
+#Column Price :
+computerdata$price<-outlierTreament(computerdata$price)
+A1<-boxplot(computerdata$price)   #No
+
+#Column hd :
+computerdata$hd<-outlierTreament(computerdata$hd)
+C1<-boxplot(computerdata$hd)   #only 1
+
+#Column ram :
+computerdata$ram<-outlierTreament(computerdata$ram)
+D1<-boxplot(computerdata$ram)   #only 1
+
+
+#Normaliy Check:
+
+#Calculate Mean and Median :
+
+summary(computerdata)
+
+ #  Price            Speed           HD                RAM               SCREEN
+#Median :2144   Median : 50.00   Median : 340.0   Median : 8.000   Median :14.00  
+#Mean   :2220   Mean   : 52.01   Mean   : 416.6   Mean   : 8.287   Mean   :14.61 
+
+ #   ADS           Trend
+#Median :246.0  Median: 16.00
+#Mean   :221.3  Mean  : 15.93
+
+#Graphical Representation :
+
+#Histogram:
+hist(computerdata$price)
+hist(computerdata$speed)
+hist(computerdata$hd)
+hist(computerdata$ram)
+hist(computerdata$screen)
+
+#QQ Plot:
+
+qqnorm(computerdata$price)
+qqline(computerdata$price)
+
+qqnorm(computerdata$speed)
+qqline(computerdata$speed)
+
+qqnorm(computerdata$hd)
+qqline(computerdata$hd)
+
+qqnorm(computerdata$ram)
+qqline(computerdata$ram)
+
+qqnorm(computerdata$screen)
+qqline(computerdata$screen)
+
+#Standardisation to make the data scale free:
+
+computerdata_standard<-as.data.frame(scale(computerdata))
+View(computerdata_standard)
+summary(computerdata_standard)
+
+attach(computerdata_standard)
+
+#Plot relationship between each X and Y:
+plot(speed,price)    
+plot(hd,price)
+plot(ram,price)
+plot(screen,price)
+plot(cd,price)
+plot(multi,price)
+plot(premium,price)
+plot(ads,price)
+plot(trend,price)
+
+pairs(computerdata)
+
+#Correlation between Input and Output Variables:
+cor(speed,price)       #0.3049     
+cor(hd,price)          #0.436
+cor(ram,price)         #0.6496
+cor(screen,price)      #0.2874
+cor(cd,price)          #0.2077
+cor(multi,price)       #-0.0100
+cor(premium,price)     #-0.078
+cor(ads,price)         #0.056
+cor(trend,price)       #-0.1936
+
+cor(computerdata)
+
+# No Input variable is having strong relation with Output Variable. 
+
+#Model : each I/P variable with O/P Variable :
+
+model_speed<-lm(price~speed,data=computerdata_standard)
+summary(model_speed)
+#p<0.05
+#Multiple R-squared:  0.09297,	Adjusted R-squared:  0.09283  .... Very less
+
+model_hd<-lm(price~hd,data=computerdata_standard)
+summary(model_hd)
+#p<0.05
+#Multiple R-squared:  0.1907,	Adjusted R-squared:  0.1905 ...... Very less
+
+model_ram<-lm(price~ram,data=computerdata_standard)
+summary(model_ram)
+#p<0.05
+#Multiple R-squared:  0.4221,	Adjusted R-squared:  0.422 ...... Very less
+
+model_screen<-lm(price~screen,data=computerdata_standard)
+summary(model_screen)
+#p<0.05
+#Multiple R-squared:  0.08261,	Adjusted R-squared:  0.08246 ...... Very less
+
+model_cd<-lm(price~cd,data=computerdata_standard)
+summary(model_cd)
+#p<0.05
+#Multiple R-squared:  0.04315,	Adjusted R-squared:  0.043  ...... Very less
+
+model_multi<-lm(price~multi,data=computerdata_standard)
+summary(model_multi)
+#p<0.05
+#Multiple R-squared:  0.0001011,Adjusted R-squared:  -5.875e-05 .... Very less
+
+model_premium<-lm(price~premium,data=computerdata_standard)
+summary(model_premium)
+#p<0.05
+#Multiple R-squared:  0.006093,	Adjusted R-squared:  0.005934...... Very less
+
+model_ads<-lm(price~ads,data=computerdata_standard)
+summary(model_ads)
+#p<0.05
+#Multiple R-squared:  0.003158,	Adjusted R-squared:  0.002999  ...... Very less
+
+model_trend<-lm(price~trend,data=computerdata_standard)
+summary(model_trend)
+#p<0.05
+#Multiple R-squared:  0.03751,	Adjusted R-squared:  0.03736  ...... Very less
+
+#Model Building:
+#Model1 :
+
+model1_computerdata<-lm(price~speed+hd+ram+screen+cd+multi+premium+ads+trend,data=computerdata_standard)
+summary(model1_computerdata)
+#p<0.05
+#Multiple R-squared:  0.7845,	Adjusted R-squared:  0.7842  .. Moderate
+
+
+#Prediction:
+prediction_computerdata<-predict(model1_computerdata,interval = "predict")
+View(prediction_computerdata)
+
+#Check for collinearity : VIF
+library(car)
+vif(model1_computerdata)
+
+#vif<10   .. No Collinearity Problem
+
+model1_computerdata$coefficients
+model1_computerdata$residuals
+
+plot(model1_computerdata)
+
+#Identify influential Variable:
+qqPlot(model1_computerdata)   #208 310
+influence.measures(model1_computerdata)
+influencePlot(model1_computerdata)    # 80  208  310  1689  1785 4410 
+
+#Diagnostic Plot:
+influenceIndexPlot(model1_computerdata)
+
+
+#Build other models for better R Squared value :
+#Model2 with deleting 208 and 310 row :
+
+model2_computerdata<-lm(price~speed+hd+ram+screen+cd+multi+premium+ads+trend,data=computerdata_standard[-c(208,310),])
+summary(model2_computerdata)
+#p<0.05
+#Multiple R-squared:  0.7858,	Adjusted R-squared:  0.7855 
+
+model2_computerdata$coefficients
+model2_computerdata$residuals
+
+
+#Check for collinearity : VIF
+
+vif(model2_computerdata)
+
+#vif<10   .. No Collinearity Problem
+
+#Prediction:
+prediction2_computerdata<-predict(model2_computerdata,interval = "predict")
+View(prediction2_computerdata)
+
+#Model3 with deleting 80,208,310 and 4410 rows:
+model3_computerdata<-lm(price~speed+hd+ram+screen+cd+multi+premium+ads+trend,data=computerdata_standard[-c(80,208,310,4410),])
+summary(model3_computerdata)
+#p<0.05
+#Multiple R-squared:  0.7868,	Adjusted R-squared:  0.7865
+
+model3_computerdata$coefficients
+model3_computerdata$residuals
+
+
+#Check for collinearity : VIF
+
+vif(model3_computerdata)
+
+#vif<10   .. No Collinearity Problem
+
+#Prediction:
+prediction3_computerdata<-predict(model3_computerdata,interval = "predict")
+View(prediction3_computerdata)
+
+#Model4 without cd,multi and premium variables:
+model4_computerdata<-lm(price~speed+hd+ram+screen+ads+trend,data=computerdata_standard[-c(80,208,310,4410),])
+summary(model4_computerdata)
+#p<0.05
+#Multiple R-squared:  0.7189,	Adjusted R-squared:  0.7186
+
+model4_computerdata$coefficients
+model4_computerdata$residuals
+
+
+#Check for collinearity : VIF
+
+vif(model4_computerdata)
+
+#vif<10   .. No Collinearity Problem
+
+#Prediction:
+prediction4_computerdata<-predict(model4_computerdata,interval = "predict")
+View(prediction4_computerdata)
+
+#avplots :
+avPlots(model1_computerdata)
+avPlots(model2_computerdata)
+avPlots(model3_computerdata)
+avPlots(model4_computerdata)
+
+#Check AIC :
+library(MASS)
+
+stepAIC(model1_computerdata)
+
+#Result : R Squared value of all the models are approx same.
