@@ -30,3 +30,8 @@ Reinforcement learning
 Supervised learning is the types of machine learning in which machines are trained using well "labelled" training data, 
 and on basis of that data, machines predict the output. The labelled data means some input data is already tagged with the correct output.
 The goal of supervised learning is to map input data with the output data. The supervised learning is based on supervision, and it is the same as when a student learns things in the supervision of the teacher.
+
+## Supervised learning can be grouped further in two categories of algorithms:
+
+Classification
+Regression
