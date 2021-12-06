@@ -33,5 +33,4 @@ The goal of supervised learning is to map input data with the output data. The s
 
 ## Supervised learning can be grouped further in two categories of algorithms:
 
-# Classification
-# Regression
+Classification, Regression
