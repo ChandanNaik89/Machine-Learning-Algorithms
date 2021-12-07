@@ -41,4 +41,5 @@ Unsupervised learning is a learning method in which a machine learns without any
 The training is provided to the machine with the set of data that has not been labeled, classified, or categorized, and the algorithm needs to act on that data without any supervision. The goal of unsupervised learning is to restructure the input data into new features or a group of objects with similar patterns.
 In unsupervised learning, we don't have a predetermined result. The machine tries to find useful insights from the huge amount of data. It can be further classifieds into two categories of algorithms:
 
+## Classification of Unsupervised Learning
 Clustering, Association.
