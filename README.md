@@ -34,3 +34,8 @@ The goal of supervised learning is to map input data with the output data. The s
 ## Supervised learning can be grouped further in two categories of algorithms:
 
 Classification, Regression
+
+##  Unsupervised Learning
+Unsupervised learning is a learning method in which a machine learns without any supervision.
+
+The training is provided to the machine with the set of data that has not been labeled, classified, or categorized, and the algorithm needs to act on that data without any supervision. The goal of unsupervised learning is to restructure the input data into new features or a group of objects with similar patterns.
