@@ -43,5 +43,5 @@ In unsupervised learning, we don't have a predetermined result. The machine trie
 
 ## Classification of Unsupervised Learning
 
-Clustering 
-Association.
+1.) Clustering
+2.) Association.
