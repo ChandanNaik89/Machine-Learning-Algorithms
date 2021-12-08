@@ -42,4 +42,5 @@ The training is provided to the machine with the set of data that has not been l
 In unsupervised learning, we don't have a predetermined result. The machine tries to find useful insights from the huge amount of data. It can be further classifieds into two categories of algorithms:
 
 ## Classification of Unsupervised Learning
-Clustering, Association.
+Clustering 
+Association.
