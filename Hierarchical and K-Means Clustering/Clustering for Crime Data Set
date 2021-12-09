@@ -1,0 +1,124 @@
+#Read csv file:
+
+#crime<-read.csv(file.choose())
+crime<-read.csv("C:\\Users\\admin\\Desktop\\python program files\\Assignment 7\\crime_data.csv")
+View(crime)
+#class(crime)
+
+crime<-crime[,2:5]      #Excluding the Name of Places.
+View(crime)
+
+#Preprocessing of data :
+
+#Calculate Mean and Median :
+
+summary(crime)
+
+#    Murder          Assault        UrbanPop              Rape
+#Median : 7.250   Median :159.0   Median :66.00      Median :20.10
+#Mean   : 7.788   Mean   :170.8   Mean   :65.54      Mean   :21.23
+
+#Graphical Representation :
+
+#Histogram:
+hist(crime$Murder)
+hist(crime$Assault)
+hist(crime$UrbanPop)
+hist(crime$Rape)
+
+#QQ Plot:
+qqnorm(crime$Murder)
+qqline(crime$Murder)
+
+qqnorm(crime$Assault)
+qqline(crime$Assault)
+
+qqnorm(crime$UrbanPop)
+qqline(crime$UrbanPop)
+
+qqnorm(crime$Rape)
+qqline(crime$Rape)
+
+#Box Plot:
+
+A<-boxplot(crime$Murder)
+B<-boxplot(crime$Assault)
+C<-boxplot(crime$UrbanPop)
+D<-boxplot(crime$Rape)
+
+#Outliers :
+
+A$out     #No
+B$out     #No
+C$out     #No
+D$out     #44.5 and 46.0
+
+#Only Rape variable has outliers.
+
+#All the variables follows Normal Distribution(Approx) except Assault.
+
+#Checking for Null Values:
+
+is.na(crime$Murder)      #False
+is.na(crime$Assault)     #False
+is.na(crime$UrbanPop)    #False
+is.na(crime$Rape)        #False
+
+# No Null Values in Data set Crime
+
+# Standardisation of Data:
+#This process is better than Normalization because it deals with outliers.
+
+crime_standard<-scale(crime)
+View(crime_standard)
+summary(crime_standard)
+class(crime_standard)
+
+#Calculating Distance (Euclidean Method) :
+#Distance Matrix
+
+dist<-dist(crime_standard,method = "euclidean")
+str(dist)
+
+#Creating Clusters :
+
+crime_clust<-hclust(dist,method = "complete")
+
+#Plot a Diagram(Dendrogram):
+
+plot(crime_clust)
+plot(crime_clust,hang = -1) #hang=-1 is used to show the labels clearly below the plot 
+
+#Draw rectangle around clusters for clear view:
+
+rect.hclust(crime_clust,k=3,border="red")  #k=No. of clusters
+
+# For k=3, Size of each cluster is not same. 
+
+rect.hclust(crime_clust,k=4,border = "blue")
+#Size is almost similar. 
+
+#Cut tree into 4 clusters.
+
+groups<-cutree(crime_clust,k=4)
+class(groups)
+
+#Add groups column to crime data set
+crime_data_final<-cbind(crime,groups)
+View(crime_data_final)
+
+#Sort the crime data by groups
+
+?aggregate()
+crime_final<-aggregate(crime_data_final,by=list(crime_data_final$groups),FUN = mean)
+
+#Group.1     Murder       Assault     UrbanPop       Rape     groups
+#   1      14.087500    252.7500     53.50000      24.53750      1
+#   2      11.054545    264.0909     79.09091      32.61818      2
+#   3      5.871429     134.4762     70.76190      18.58095      3
+#   4      3.180000     78.7000      49.30000      11.63000      4
+
+write.csv(crime_data_final,file = "C:\\Users\\admin\\Desktop\\python program files\\Assignment 7\\crime_final.csv")
+
+#Result :
+#We can say that Group 2 is having higher rate of crime and Group 4 is having less rate of crime.
