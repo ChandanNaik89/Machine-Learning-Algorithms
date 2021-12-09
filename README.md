@@ -12,7 +12,7 @@ Suppose we have a complex problem, where we need to perform some predictions, so
 ## Features of Machine Learning: ##
 
 Machine learning uses data to detect various patterns in a given dataset.
-It can learn from past data and improve automatically.
+It can learn from past data and improve automatically. 
 It is a data-driven technology.
 Machine learning is much similar to data mining as it also deals with the huge amount of the data.
 
