@@ -1,0 +1,117 @@
+#Read a csv file:
+
+book<-read.csv(file.choose())
+str(book)
+View(book)
+
+#Convert into factors :
+
+book$ChildBks<-as.factor(book$ChildBks)
+book$YouthBks<-as.factor(book$YouthBks)
+book$CookBks<-as.factor(book$CookBks)
+book$DoItYBks<-as.factor(book$DoItYBks)
+book$RefBks<-as.factor(book$RefBks)
+book$ArtBks<-as.factor(book$ArtBks)
+book$GeogBks<-as.factor(book$GeogBks)
+book$ItalCook<-as.factor(book$ItalCook)
+book$ItalAtlas<-as.factor(book$ItalAtlas)
+book$ItalArt<-as.factor(book$ItalArt)
+book$Florence<-as.factor(book$Florence)
+
+str(book)
+
+
+#Install arules package :
+
+install.packages("arules")
+library(arules)
+
+# Creating rules by apriori algo. :
+rules_books<-apriori(book)
+
+#Confidence=0.8, support=0.1
+# Minimum length is 1 and max length is 10
+#set of rules =13987
+
+inspect(head(rules_books),n=10)
+rules_sorted<-inspect(head(sort(rules_books,by="lift"),n=10))
+
+#lhs              rhs          support confidence coverage     lift    count
+#{ItalCook=1}  => {CookBks=1}   0.1135  1.0000000   0.1135   2.320186   227
+
+#{YouthBks=1,                                                            
+#CookBks=1,                                                             
+#ItalArt=0,                                                             
+#Florence=0}  => {ChildBks=1}  0.1025  0.8070866   0.1270    1.908006   205
+
+#{DoItYBks=1,                                                            
+#ArtBks=1}    => {CookBks=1}   0.1015  0.8218623   0.1235   1.906873    203
+
+#{CookBks=1,                                                             
+#RefBks=1,                                                              
+#ItalAtlas=0} => {ChildBks=1}  0.1000  0.8064516   0.1240  1.906505     200
+
+#{DoItYBks=1,                                                            
+#GeogBks=1,                                                             
+#ItalAtlas=0} => {CookBks=1}   0.1010  0.8211382   0.1230  1.905193    202
+
+#{DoItYBks=1,                                                            
+#GeogBks=1}   => {CookBks=1}   0.1085  0.8188679   0.1325  1.899926   217
+
+#{CookBks=1,                                                             
+#RefBks=1}    => {ChildBks=1}  0.1225  0.8032787   0.1525  1.899004   245
+
+#{YouthBks=1,                                                            
+#CookBks=1,                                                             
+#Florence=0}  => {ChildBks=1}  0.1140  0.8028169   0.1420  1.897912   228
+
+#{ArtBks=1,                                                              
+#GeogBks=1}   => {ChildBks=1}  0.1020  0.8000000   0.1275  1.891253   204
+
+#{YouthBks=1,                                                            
+#CookBks=1,                                                             
+#ItalArt=0}   => {ChildBks=1}  0.1140  0.8000000   0.1425  1.891253   228
+
+
+#Reduce the no of rules by changing support and confidence value:
+
+rules_book<-apriori(book,parameter = list(support=0.2,confidence=0.5,minlen=5))
+
+#Set of rules : 9407
+#Confidence=0.5 and support=0.2
+
+rules_sorted1<-inspect(head(sort(rules_book,by="lift"),n=10))
+
+quality(head(sort(rules_book,by="lift")))
+
+#support confidence coverage     lift     count
+# 0.353  0.7853170   0.4495    1.380171   706
+# 0.353  0.7853170   0.4495    1.380171   706
+# 0.353  0.7853170   0.4495    1.380171   706
+# 0.353  0.7853170   0.4495    1.380171   706
+# 0.313  0.7815231   0.4005    1.373503   626
+# 0.313  0.7815231   0.4005    1.373503   626
+
+
+
+#Visualization of Rules created:
+#Need to install package arulesViz
+install.packages("arulesViz")
+library(arulesViz)
+
+#Scatter Plot
+plot(sort(rules_book,by="lift"))
+plot(sort(rules_books,by="lift"))
+
+#Graph Plot:
+plot(sort(rules_book,by="lift"),method="graph")
+plot(sort(rules_books,by="lift"),method="graph")
+
+#Grouped Matix for top 10 rules :
+
+plot(head(sort(rules_book,by="lift"),n=100),method = "grouped")
+plot(head(sort(rules_books,by="lift"),n=100),method = "grouped")
+
+#Result:
+
+#Those who are interested in childbks also shows their interest in Cookbks and Youth Books
