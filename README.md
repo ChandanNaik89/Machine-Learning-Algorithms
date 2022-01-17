@@ -55,3 +55,7 @@ Reinforcement learning is a feedback-based learning method, in which a learning 
 ## History of Machine Learning ##
 
 Before some years (about 40-50 years), machine learning was science fiction, but today it is the part of our daily life. Machine learning is making our day to day life easy from self-driving cars to Amazon virtual assistant "Alexa". However, the idea behind machine learning is so old and has a long history. Below some milestones are given which have occurred in the history of machine learning
+
+## Need for Machine Learning ##
+
+The need for machine learning is increasing day by day. The reason behind the need for machine learning is that it is capable of doing tasks that are too complex for a person to implement directly. As a human, we have some limitations as we cannot access the huge amount of data manually, so for this, we need some computer systems and here comes the machine learning to make things easy for us.
