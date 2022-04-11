@@ -45,7 +45,7 @@ Unsupervised learning is a learning method in which a machine learns without any
 
 ## Classification of Unsupervised Learning
 
-1.) Clustering
+1.) Clustering 
 2.) Association. 
 
 ## Reinforcement Learning ## 
