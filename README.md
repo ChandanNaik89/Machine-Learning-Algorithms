@@ -12,7 +12,7 @@ A Machine Learning system learns from historical data, builds the prediction mod
 
 Suppose we have a complex problem, where we need to perform some predictions, so instead of writing a code for it, we just need to feed the data to generic algorithms, and with the help of these algorithms, machine builds the logic as per the data and predict the output. Machine learning has changed our way of thinking about the problem.
  
-## Features of Machine Learning: ##   
+## Features of Machine Learning: ##    
 
 Machine learning uses data to detect various patterns in a given dataset.
 It can learn from past data and improve automatically. 
